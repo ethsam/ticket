@@ -29,6 +29,12 @@ class Answer
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column]
+    private ?bool $validate = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $validateAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -99,4 +105,53 @@ class Answer
 
         return $this;
     }
+
+    public function getFirstDataValue(): ?string
+    {
+        if (!is_array($this->data) || empty($this->data)) {
+            return null;
+        }
+
+        $first = reset($this->data); // première valeur
+
+        // Si c’est un array (checkbox par ex)
+        if (is_array($first)) {
+            return implode(', ', $first);
+        }
+
+        return (string) $first;
+    }
+
+    public function isValidate(): ?bool
+    {
+        return $this->validate;
+    }
+
+    public function setValidate(bool $validate): static
+    {
+        $this->validate = $validate;
+
+        if ($validate === true && $this->validateAt === null) {
+            $this->validateAt = new \DateTimeImmutable();
+        }
+
+        if ($validate === false) {
+            $this->validateAt = null;
+        }
+
+        return $this;
+    }
+
+    public function getValidateAt(): ?\DateTimeImmutable
+    {
+        return $this->validateAt;
+    }
+
+    public function setValidateAt(?\DateTimeImmutable $validateAt): static
+    {
+        $this->validateAt = $validateAt;
+
+        return $this;
+    }
+
 }

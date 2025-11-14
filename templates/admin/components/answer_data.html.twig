@@ -1,0 +1,18 @@
+<div class="ea-form-panel">
+    <h4>Détails de la réponse</h4>
+
+    <table class="table table-bordered">
+        {% for key, value in field.value %}
+            <tr>
+                <th>{{ key }}</th>
+                <td>
+                    {% if value is iterable %}
+                        {{ value|join(', ') }}
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

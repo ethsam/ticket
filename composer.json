@@ -15,6 +15,7 @@
         "easycorp/easyadmin-bundle": "^4.27",
         "knplabs/knp-paginator-bundle": "^6.9",
         "liip/imagine-bundle": "^2.15",
+        "phpoffice/phpspreadsheet": "^5.2",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",

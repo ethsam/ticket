@@ -196,5 +196,13 @@ class Field
         }
     }
 
+    public function getOptionsArray(): array
+    {
+        if (!$this->options) {
+            return [];
+        }
+
+        return json_decode($this->options, true) ?? [];
+    }
 
 }

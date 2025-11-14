@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/vendor/slick.css">
+    <link rel="stylesheet" href="/assets/css/vendor/slick-theme.css">
+    <link rel="stylesheet" href="/assets/css/plugins/sal.css">
+    <link rel="stylesheet" href="/assets/css/plugins/feather.css">
+    <link rel="stylesheet" href="/assets/css/plugins/fontawesome.min.css">
+    <link rel="stylesheet" href="/assets/css/plugins/euclid-circulara.css">
+    <link rel="stylesheet" href="/assets/css/plugins/swiper.css">
+    <link rel="stylesheet" href="/assets/css/plugins/odometer.css">
+    <link rel="stylesheet" href="/assets/css/plugins/animation.css">
+    <link rel="stylesheet" href="/assets/css/plugins/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/assets/css/plugins/jquery-ui.css">
+    <link rel="stylesheet" href="/assets/css/plugins/magnigy-popup.min.css">
+    <link rel="stylesheet" href="/assets/css/plugins/plyr.css">
+    <link rel="stylesheet" href="/assets/css/plugins/jodit.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+{% endblock %}
+
+{% block body %}
+    <style>
+        button.rbt-btn.btn-md.btn-gradient.hover-icon-reverse.w-100:hover {
+            background-color: #2c408b !important;
+        }
+    </style>
+    <div class="rbt-create-course-area bg-color-white rbt-section-gap" style=" padding-top: 50px; ">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-8 mx-auto">
+                    {# <h1 class="mb--20">Formulaire de demande</h1> #}
+                    <h1>{{ formConfig.confirmationMessage }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="/assets/js/vendor/modernizr.min.js"></script>
+    <script src="/assets/js/vendor/jquery.js"></script>
+    <script src="/assets/js/vendor/bootstrap.min.js"></script>
+    <script src="/assets/js/vendor/sal.js"></script>
+    <script src="/assets/js/vendor/js.cookie.js"></script>
+    <script src="/assets/js/vendor/jquery.style.switcher.js"></script>
+    <script src="/assets/js/vendor/swiper.js"></script>
+    <script src="/assets/js/vendor/jquery-appear.js"></script>
+    <script src="/assets/js/vendor/odometer.js"></script>
+    <script src="/assets/js/vendor/backtotop.js"></script>
+    <script src="/assets/js/vendor/isotop.js"></script>
+    <script src="/assets/js/vendor/imageloaded.js"></script>
+    <script src="/assets/js/vendor/wow.js"></script>
+    <script src="/assets/js/vendor/waypoint.min.js"></script>
+    <script src="/assets/js/vendor/easypie.js"></script>
+    <script src="/assets/js/vendor/text-type.js"></script>
+    <script src="/assets/js/vendor/jquery-one-page-nav.js"></script>
+    <script src="/assets/js/vendor/bootstrap-select.min.js"></script>
+    <script src="/assets/js/vendor/jquery-ui.js"></script>
+    <script src="/assets/js/vendor/magnify-popup.min.js"></script>
+    <script src="/assets/js/vendor/paralax-scroll.js"></script>
+    <script src="/assets/js/vendor/paralax.min.js"></script>
+    <script src="/assets/js/vendor/countdown.js"></script>
+    <script src="/assets/js/vendor/plyr.js"></script>
+    <script src="/assets/js/vendor/jodit.min.js"></script>
+    <script src="/assets/js/vendor/Sortable.min.js"></script>
+    <script src="/assets/js/main.js"></script>
+{% endblock %}
+
+
