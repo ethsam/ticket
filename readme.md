@@ -62,6 +62,11 @@ symfony console doctrine:migrations:migrate
 php bin/console make:entity
 ```
 
+```bash
+# Données de base
+php bin/console initialize
+```
+
 ---
 
 ## 📝 Notes

@@ -1,0 +1,22 @@
+{% block ea_collection_widget %}
+    <div class="ea-collection-container" data-sortable="1">
+        {{ block('form_widget') }}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        document.querySelectorAll('[data-sortable="1"]').forEach(function (container) {
+            new Sortable(container, {
+                animation: 150,
+                handle: '.form-group',
+                onEnd: function () {
+                    let items = container.querySelectorAll('[data-ea-collection-field]');
+                    items.forEach((el, index) => {
+                        let input = el.querySelector('input[name$="[position]"]');
+                        if (input) input.value = index + 1;
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

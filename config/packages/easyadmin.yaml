@@ -1,0 +1,4 @@
+easy_admin:
+    design:
+        form_theme:
+            - 'admin/components/collection_drag.html.twig'

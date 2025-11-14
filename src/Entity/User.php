@@ -34,6 +34,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $userName = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $clearpassword = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -67,10 +70,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->roles[0] ?? null;
     }
 
     /**
@@ -123,6 +128,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserName(string $userName): static
     {
         $this->userName = $userName;
+
+        return $this;
+    }
+
+    public function getClearpassword(): ?string
+    {
+        return $this->clearpassword;
+    }
+
+    public function setClearpassword(?string $clearpassword): static
+    {
+        $this->clearpassword = $clearpassword;
 
         return $this;
     }
