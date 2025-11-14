@@ -37,6 +37,9 @@ composer require artgris/filemanager-bundle
 
 # Traitement d'images
 composer require liip/imagine-bundle
+
+# Mailer
+composer require symfony/mailer
 ```
 
 ---

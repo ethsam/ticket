@@ -3,13 +3,15 @@
 namespace App\Command;
 
 use App\Entity\User;
+use App\Entity\MailProvider;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Attribute\AsCommand;
+use App\Repository\MailProviderRepository;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
@@ -21,7 +23,8 @@ class InitializeCommand extends Command
     public function __construct(
         private UserRepository $userRepository,
         private EntityManagerInterface $em,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
+        private MailProviderRepository $mailProviderRepository
     ) {
         parent::__construct();
     }
@@ -30,6 +33,14 @@ class InitializeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $this->createUser($io);
+        //$this->createProvider($io);
+
+        return Command::SUCCESS;
+    }
+
+    private function createUser($io)
+    {
         $email = 'setheve@viceversa.re';
 
         // Vérification existence utilisateur
@@ -51,8 +62,34 @@ class InitializeCommand extends Command
 
         $this->em->persist($user);
         $this->em->flush();
-
         $io->success('Utilisateur administrateur créé : ' . $email);
+
+        return Command::SUCCESS;
+    }
+
+    private function createProvider($io)
+    {
+        $providers = [
+            'Gmail',
+            'SMTP',
+        ];
+
+        foreach ($providers as $providerSingle) {
+            $existingProvider = $this->mailProviderRepository->findOneBy(['title' => $providerSingle]);
+
+            if ($existingProvider) {
+                $io->warning('Provider existe déjà : ' . $providerSingle);
+                continue;
+            } else {
+                $provider = new MailProvider();
+                $provider->setCreatedAt(new \DateTimeImmutable());
+                $provider->setTitle($providerSingle);
+                $io->success('Provider créé : ' . $provider->getTitle());
+            }
+        }
+
+        $this->em->persist($provider);
+        $this->em->flush();
 
         return Command::SUCCESS;
     }

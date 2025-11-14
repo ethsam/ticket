@@ -44,8 +44,12 @@ class DashboardController extends AbstractDashboardController
                 yield MenuItem::section('GESTIONS'),
                 yield MenuItem::linkToCrud('Formulaires', 'fas fa-file-alt', \App\Entity\Form::class)->setController(FormCrudController::class),
 
+                yield MenuItem::section('DATAS'),
+                yield MenuItem::linkToCrud('Réponses formulaires', 'fas fa-check-circle', \App\Entity\Answer::class)->setController(AnswerCrudController::class),
+
                 yield MenuItem::section('PARAMETRES'),
                 yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', \App\Entity\User::class)->setController(UserCrudController::class),
+                yield MenuItem::linkToCrud('Providers', 'fas fa-envelope', \App\Entity\MailProvider::class)->setController(MailProviderCrudController::class),
 
                 yield MenuItem::section('', ''),
                 yield MenuItem::linkToUrl('ticket.re', 'fas fa-at', 'https://www.ticket.re')->setLinkTarget('_blank'),
@@ -65,6 +69,7 @@ class DashboardController extends AbstractDashboardController
 
                 yield MenuItem::section('PARAMETRES'),
                 yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', \App\Entity\User::class)->setController(UserCrudController::class),
+                yield MenuItem::linkToCrud('Providers', 'fas fa-envelope', \App\Entity\MailProvider::class)->setController(MailProviderCrudController::class),
 
                 yield MenuItem::section('', ''),
                 yield MenuItem::linkToUrl('ticket.re', 'fas fa-at', 'https://www.ticket.re')->setLinkTarget('_blank'),

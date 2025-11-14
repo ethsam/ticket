@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Form;
 use App\Entity\Answer;
+use Symfony\Component\Mime\Email;
 use App\Repository\FormRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,11 +18,12 @@ final class FormController extends AbstractController
 {
     private $entityManager;
     private $formRepository;
-
-    public function __construct(EntityManagerInterface $entityManager, FormRepository $formRepository)
+    private $mailer;
+    public function __construct(EntityManagerInterface $entityManager, FormRepository $formRepository, MailerInterface $mailer)
     {
         $this->entityManager = $entityManager;
         $this->formRepository = $formRepository;
+        $this->mailer = $mailer;
     }
 
     #[Route('/formulaire', name: 'app_form')]
@@ -62,5 +67,54 @@ final class FormController extends AbstractController
             'formConfig' => $form,
             'fields' => $form->getFields(),
         ]);
+    }
+
+    #[Route('/test-email-send', name: 'app_member_test_email_send')]
+    public function testEmailSend(): Response
+    {
+        //$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $email = (new Email())
+            ->from('graphisme@univ-reunion.fr')
+            ->to('setheve@viceversa.re')
+            ->subject('Test envoi SMTP Gmail')
+            ->text('Ceci est un test d’envoi SMTP.')
+            ->html('<p>Ceci est un <strong>test</strong> d’envoi SMTP Gmail.</p>');
+
+        $this->mailer->send($email);
+
+        return new Response('Email envoyé');
+
+    }
+
+    public function sendMailAfterFormPostPublic(Answer $answer, Form $form, string $emailRecept): void
+    {
+        $objetMail = $form->getObjectEmail() ?? 'Votre inscription à ' . $form->getTitle();
+
+        $email = (new TemplatedEmail())
+            ->from('graphisme@univ-reunion.fr')
+            ->to($emailRecept)
+            ->subject($objetMail)
+            ->htmlTemplate('email/inscription_qrcode.html.twig')
+            ->context([
+                'answer' => $answer,
+            ]);
+
+        $this->mailer->send($email);
+    }
+
+    public function errorSendMail(Answer $answer, Form $form): void
+    {
+        $email = (new TemplatedEmail())
+            ->from('graphisme@univ-reunion.fr')
+            ->to("setheve@viceversa.re")
+            ->subject("Erreur d'envoi de mail depuis un formulaire public")
+            ->htmlTemplate('email/error_send_mail.html.twig')
+            ->context([
+                'answer' => $answer,
+                'form' => $form,
+            ]);
+
+        $this->mailer->send($email);
     }
 }

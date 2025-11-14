@@ -48,6 +48,12 @@ class Form
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $sendmailbool = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $objectEmail = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -221,6 +227,30 @@ class Form
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function isSendmailbool(): ?bool
+    {
+        return $this->sendmailbool;
+    }
+
+    public function setSendmailbool(?bool $sendmailbool): static
+    {
+        $this->sendmailbool = $sendmailbool;
+
+        return $this;
+    }
+
+    public function getObjectEmail(): ?string
+    {
+        return $this->objectEmail;
+    }
+
+    public function setObjectEmail(?string $objectEmail): static
+    {
+        $this->objectEmail = $objectEmail;
 
         return $this;
     }
