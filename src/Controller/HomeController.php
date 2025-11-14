@@ -18,7 +18,7 @@ final class HomeController extends AbstractController
         private EntityManagerInterface $em
     ) {}
 
-    #[Route('/home', name: 'app_home')]
+    #[Route('/', name: 'app_home')]
     public function index(): Response
     {
         return $this->render('home/index.html.twig');
@@ -27,8 +27,11 @@ final class HomeController extends AbstractController
     #[Route('/admin/answers/export/{formId}', name: 'admin_answers_export')]
     public function exportXls(int $formId): Response
     {
-        // Récupération des réponses pour un formulaire donné
-        $answers = $this->answerRepo->findBy(['form' => $formId]);
+        // Réponses triées du plus récent au plus ancien
+        $answers = $this->answerRepo->findBy(
+            ['form' => $formId],
+            ['id' => 'DESC']
+        );
 
         if (!$answers) {
             return new Response("Aucune réponse à exporter.");
@@ -37,59 +40,90 @@ final class HomeController extends AbstractController
         /** @var Answer $first */
         $first = $answers[0];
         $form = $first->getForm();
-        $fields = $form->getFields(); // Champs définis dans l’admin
+        $fields = $form->getFields();
 
         // -------- Excel ----------
         $spreadsheet = new Spreadsheet();
-        /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet */
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Ligne des titres
+        // ---------------------------------------
+        // TITRES
+        // ---------------------------------------
         $col = 1;
+
+        // 1) ID
+        $sheet->setCellValue($this->colToLetter($col).'1', 'ID');
+        $col++;
+
+        // 2) Validé
+        $sheet->setCellValue($this->colToLetter($col).'1', 'Validé');
+        $col++;
+
+        // 3) Validé le
+        $sheet->setCellValue($this->colToLetter($col).'1', 'Validé le');
+        $col++;
+
+        // 4) Champs dynamiques
         foreach ($fields as $field) {
-            $sheet->setCellValueByColumnAndRow($col, 1, $field->getLabel());
+            $sheet->setCellValue($this->colToLetter($col).'1', $field->getLabel());
             $col++;
         }
 
-        // Colonnes supplémentaires
-        $sheet->setCellValueByColumnAndRow($col, 1, 'Date');
+        // 5) Date de création
+        $sheet->setCellValue($this->colToLetter($col).'1', 'Date');
         $col++;
 
-        $sheet->setCellValueByColumnAndRow($col, 1, 'ID');
-        $col++;
-
-        // Remplir les réponses
+        // ---------------------------------------
+        // LIGNES
+        // ---------------------------------------
         $row = 2;
 
         foreach ($answers as $answer) {
 
-            $data = $answer->getData();
             $col = 1;
+
+            // 1) ID
+            $sheet->setCellValue($this->colToLetter($col).$row, $answer->getId());
+            $col++;
+
+            // 2) Validé (Oui/Non)
+            $sheet->setCellValue(
+                $this->colToLetter($col).$row,
+                $answer->isValidate() ? 'Oui' : 'Non'
+            );
+            $col++;
+
+            // 3) Validé le (date ou vide)
+            $sheet->setCellValue(
+                $this->colToLetter($col).$row,
+                $answer->getValidateAt() ? $answer->getValidateAt()->format('d/m/Y H:i') : ''
+            );
+            $col++;
+
+            // 4) Champs dynamiques
+            $data = $answer->getData();
 
             foreach ($fields as $field) {
                 $name = $field->getName();
 
                 if (!array_key_exists($name, $data)) {
-                    $sheet->setCellValueByColumnAndRow($col, $row, 'ERREUR');
+                    $sheet->setCellValue($this->colToLetter($col).$row, 'ERREUR');
                 } else {
                     $value = $data[$name];
-
                     if (is_array($value)) {
                         $value = implode(', ', $value);
                     }
-
-                    $sheet->setCellValueByColumnAndRow($col, $row, $value);
+                    $sheet->setCellValue($this->colToLetter($col).$row, $value);
                 }
 
                 $col++;
             }
 
-            // Date
-            $sheet->setCellValueByColumnAndRow($col, $row, $answer->getCreatedAt()->format('d/m/Y H:i'));
-            $col++;
-
-            // ID réponse
-            $sheet->setCellValueByColumnAndRow($col, $row, $answer->getId());
+            // 5) Date création réponse
+            $sheet->setCellValue(
+                $this->colToLetter($col).$row,
+                $answer->getCreatedAt()->format('d/m/Y H:i')
+            );
 
             $row++;
         }
@@ -106,5 +140,17 @@ final class HomeController extends AbstractController
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
+    }
+
+    // Conversion numéro -> lettre (A, B, C... AA, AB...)
+    private function colToLetter(int $col): string
+    {
+        $letters = '';
+        while ($col > 0) {
+            $col--;
+            $letters = chr(65 + ($col % 26)) . $letters;
+            $col = intdiv($col, 26);
+        }
+        return $letters;
     }
 }

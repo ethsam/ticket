@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Repository\FormRepository;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -12,10 +13,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    private $formRepository;
+
+    public function __construct(FormRepository $formRepository)
+    {
+        $this->formRepository = $formRepository;
+    }
+
     public function index(): Response
     {
-        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        return $this->render('admin/dashboard/welcome.html.twig');
+        $forms = $this->formRepository->findBy([], ['id' => 'DESC']);
+        return $this->render('admin/dashboard/welcome.html.twig', [
+            'forms' => $forms
+        ]);
     }
 
     public function configureDashboard(): Dashboard
